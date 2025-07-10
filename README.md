@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Amazon.es - Productos Gratis</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #eaeaea; margin: 0; padding: 0; }
+  header { background: #131921; color: white; padding: 15px 30px; font-size: 28px; font-weight: bold; position: fixed; width: 100%; top: 0; left: 0; z-index: 1000; }
+  main { max-width: 960px; margin: 100px auto 50px; background: white; padding: 40px 50px; border-radius: 8px; box-shadow: 0 4px 14px rgb(0 0 0 / 0.15); min-height: 400px; }
+  h1 { text-align: center; margin-bottom: 20px; }
+  p.intro { text-align: center; color: #b12704; font-weight: 700; margin-bottom: 10px; font-size: 20px; }
+  p.countdown { text-align: center; font-size: 18px; color: #333; margin-bottom: 30px; }
+  .productos { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; }
+  .producto { width: 280px; border: 1px solid #ddd; border-radius: 6px; padding: 15px; text-align: center; background: #fafafa; }
+  .producto img { width: 100%; height: 180px; object-fit: contain; margin-bottom: 12px; }
+  .nombre { font-weight: 700; margin-bottom: 8px; }
+  .precio-original { text-decoration: line-through; color: #888; }
+  .precio-oferta { color: #b12704; font-weight: 900; margin-left: 8px; }
+  button.boton-reclamar { margin-top: 18px; background: #ffd814; border: none; padding: 12px 22px; font-weight: 700; cursor: pointer; border-radius: 5px; font-size: 16px; transition: background-color 0.3s; }
+  button.boton-reclamar:hover { background-color: #f7ca00; }
+  section { display: none; }
+  section.active { display: block; }
+  form { max-width: 400px; margin: 0 auto; }
+  label { display: block; margin: 15px 0 6px; font-weight: 600; }
+  input { width: 100%; padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; }
+  button.submit-btn { margin-top: 25px; width: 100%; background: #ffd814; border: none; padding: 14px; font-weight: 700; cursor: pointer; border-radius: 5px; font-size: 18px; transition: background-color 0.3s; }
+  button.submit-btn:hover { background-color: #f7ca00; }
+  #screamer, #mensajeVirus, #tolaiContainer { display: none; position: fixed; z-index: 10000; }
+  #screamer { top: 0; left: 0; width: 100vw; height: 100vh; background: black; }
+  #screamer iframe { width: 100%; height: 100%; border: none; }
+  #mensajeVirus { top: 40%; left: 50%; transform: translate(-50%, -50%); background: #f0f0f0; border: 1px solid #666; width: 300px; padding: 15px 20px; font-size: 14px; color: #000; z-index: 11000; text-align: center; }
+  #mensajeVirus button { background: #0078d7; color: white; border: none; padding: 8px 18px; margin-top: 10px; font-size: 14px; border-radius: 2px; cursor: pointer; }
+  #tolaiContainer { top: 0; left: 0; width: 100vw; height: 100vh; background: #f5f5f5; z-index: 12000; overflow: hidden; position: fixed; }
+  .tolaiCuadro { position: absolute; background: #ffffff; border: 1px solid #999; box-shadow: 2px 2px 6px rgba(0,0,0,0.2); font-size: 13px; padding: 8px 12px; width: 230px; height: 50px; display: flex; align-items: center; justify-content: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+</style>
+</head>
+<body>
+<header>Amazon.es</header>
+<main>
+  <section id="productos" class="active">
+    <h1>¡Productos gratis! Solo tienes menos de 6 horas para reclamarlos</h1>
+    <p class="intro">Estos productos están gratis por tiempo limitado.</p>
+    <p class="countdown">Tiempo restante: <span id="timer">06:00:00</span></p>
+    <div class="productos">
+      <div class="producto">
+        <img src="https://m.media-amazon.com/images/I/714Rq4k05UL._AC_SL1500_.jpg" alt="Echo Dot" />
+        <div class="nombre">Echo Dot (4ª gen)</div>
+        <div><span class="precio-original">59,99€</span><span class="precio-oferta">0€</span></div>
+        <button class="boton-reclamar">Reclamar</button>
+      </div>
+      <div class="producto">
+        <img src="https://m.media-amazon.com/images/I/61-PblYntsL._AC_SL1500_.jpg" alt="Nintendo Switch" />
+        <div class="nombre">Nintendo Switch</div>
+        <div><span class="precio-original">299,99€</span><span class="precio-oferta">0€</span></div>
+        <button class="boton-reclamar">Reclamar</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="formulario">
+    <h1>Reclama tu regalo</h1>
+    <form id="form">
+      <label for="nombre">Nombre completo</label>
+      <input id="nombre" type="text" required />
+      <label for="telefono">Teléfono</label>
+      <input id="telefono" type="tel" required />
+      <label for="direccion">Dirección</label>
+      <input id="direccion" type="text" required />
+      <label for="tarjeta">Número de tarjeta</label>
+      <input id="tarjeta" type="text" required />
+      <button class="submit-btn">Enviar</button>
+    </form>
+  </section>
+</main>
+
+<div id="screamer">
+  <div id="player"></div>
+</div>
+<div id="mensajeVirus">
+  <p>¿Quieres eliminar el virus?</p>
+  <button id="btnSi">Sí</button>
+</div>
+<div id="tolaiContainer"></div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+let player;
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    height: '100%',
+    width: '100%',
+    videoId: 'cqhVEP4TLGg',
+    playerVars: {
+      autoplay: 0,
+      controls: 0,
+      start: 16,
+      end: 21
+    },
+    events: {
+      onReady: (event) => window.screamerReady = event
+    }
+  });
+}
+
+function iniciarScreamer() {
+  document.body.style.backgroundColor = 'red';
+  document.getElementById('formulario').style.display = 'none';
+  document.getElementById('screamer').style.display = 'block';
+  if (window.screamerReady) {
+    window.screamerReady.target.playVideo();
+    setTimeout(() => {
+      window.screamerReady.target.stopVideo();
+      document.getElementById('screamer').style.display = 'none';
+      mostrarTolai();
+    }, 5000);
+  }
+}
+
+function mostrarTolai() {
+  document.getElementById('mensajeVirus').style.display = 'block';
+}
+
+function olaDeMensajes() {
+  const frase = '💀 Era broma tolaiii';
+  const tolaiContainer = document.getElementById('tolaiContainer');
+  tolaiContainer.style.display = 'block';
+  setInterval(() => {
+    const cuadro = document.createElement('div');
+    cuadro.className = 'tolaiCuadro';
+    cuadro.textContent = frase;
+    cuadro.style.top = Math.random() * (window.innerHeight - 60) + 'px';
+    cuadro.style.left = Math.random() * (window.innerWidth - 250) + 'px';
+    tolaiContainer.appendChild(cuadro);
+  }, 150);
+}
+
+window.onload = function() {
+  let tiempoRestante = 6 * 60 * 60;
+  const timerSpan = document.getElementById('timer');
+  function actualizarTimer() {
+    let horas = Math.floor(tiempoRestante / 3600);
+    let minutos = Math.floor((tiempoRestante % 3600) / 60);
+    let segundos = tiempoRestante % 60;
+    timerSpan.textContent = `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+    if(tiempoRestante > 0) {
+      tiempoRestante--;
+      setTimeout(actualizarTimer, 1000);
+    }
+  }
+  actualizarTimer();
+
+  document.querySelectorAll('.boton-reclamar').forEach(boton => {
+    boton.onclick = () => {
+      document.getElementById('productos').classList.remove('active');
+      document.getElementById('formulario').classList.add('active');
+      window.scrollTo(0, 0);
+    };
+  });
+
+  let screamerIniciado = false;
+  document.getElementById('form').addEventListener('input', () => {
+    if (screamerIniciado) return;
+    screamerIniciado = true;
+    iniciarScreamer();
+  });
+
+  document.getElementById('btnSi').onclick = () => {
+    document.getElementById('mensajeVirus').style.display = 'none';
+    olaDeMensajes();
+  };
+};
+</script>
+</body>
+</html>
